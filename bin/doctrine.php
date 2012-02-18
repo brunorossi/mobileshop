@@ -17,34 +17,61 @@
  * <http://www.doctrine-project.org>.
  */
 
-require_once 'Doctrine/Common/ClassLoader.php';
+// Define path to application directory
+defined('APPLICATION_PATH')
+    || define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../application'));
 
-$classLoader = new \Doctrine\Common\ClassLoader('Doctrine');
+// Define application environment
+defined('APPLICATION_ENV')
+    || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
+
+// Ensure library/ is on include_path
+set_include_path(implode(PATH_SEPARATOR, array(
+    realpath(APPLICATION_PATH . '/../library'),
+    get_include_path(),
+)));
+
+// Zend Application
+require_once 'Zend/Application.php';
+
+// instance Zend Application
+$application = new Zend_Application(
+    APPLICATION_ENV,
+    APPLICATION_PATH . '/configs/application.ini'
+);
+
+// bootstrap doctrine resource manager
+$application->getBootstrap()
+            ->bootstrap('app_resource_doctrine');
+
+// get all the registered entityManagers objects into the array
+$ems = $application->getBootstrap()
+                   ->getResource('app_resource_doctrine');
+
+// Load Symfony Doctrine Component
+$classLoader = new \Doctrine\Common\ClassLoader('Symfony', APPLICATION_PATH . '/../library/Doctrine');
+// Register Symfony Doctrine Component
 $classLoader->register();
 
-$classLoader = new \Doctrine\Common\ClassLoader('Symfony', 'Doctrine');
-$classLoader->register();
 
-$configFile = getcwd() . DIRECTORY_SEPARATOR . 'cli-config.php';
 
-$helperSet = null;
-if (file_exists($configFile)) {
-    if ( ! is_readable($configFile)) {
-        trigger_error(
-            'Configuration file [' . $configFile . '] does not have read permission.', E_ERROR
-        );
-    }
+// loop over the array of entity managers objects
+foreach ($ems as $em) {
 
-    require $configFile;
 
-    foreach ($GLOBALS as $helperSetCandidate) {
-        if ($helperSetCandidate instanceof \Symfony\Component\Console\Helper\HelperSet) {
-            $helperSet = $helperSetCandidate;
-            break;
-        }
-    }
+    $helperSet = new \Symfony\Component\Console\Helper\HelperSet(
+        array(
+            'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($em->getConnection()),
+            'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper($em)
+        )
+    );
+
+    // run the console command
+    \Doctrine\ORM\Tools\Console\ConsoleRunner::run($helperSet);
+
 }
 
-$helperSet = ($helperSet) ?: new \Symfony\Component\Console\Helper\HelperSet();
 
-\Doctrine\ORM\Tools\Console\ConsoleRunner::run($helperSet);
+
+
+
