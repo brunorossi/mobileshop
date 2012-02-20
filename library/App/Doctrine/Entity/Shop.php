@@ -1,31 +1,53 @@
 <?php
+namespace App\Doctrine\Entity;
+
+use Gedmo\Mapping\Annotation as Gedmo;
+use Doctrine\ORM\Mapping as ORM;
+
 /**
- * @Entity(repositoryClass="App\Doctrine\Repository\Shop")
- * @Table(name="shops")
+ * @ORM\Entity(repositoryClass="App\Doctrine\Repository\Shop")
+ * @ORM\Table(name="shops")
  */
-class App_Doctrine_Entity_Shop
+class Shop
 {
+	
     /**
-     * @Id 
-     * @Column(name="shop_id", type="integer")
-     * @GeneratedValue
+     * @ORM\Id 
+     * @ORM\Column(name="shop_id", type="integer")
+     * @ORM\GeneratedValue
      */
     protected $shopId;
 
     /**
-     * @Column(name="name", type="string", length=500, nullable=false)
+     * @ORM\Column(name="name", type="string", length=500, nullable=false)
      */
     protected $name;
 
     /**
-     * @Column(name="address", type="string", length=500, nullable=false)
+     * @ORM\Column(name="address", type="string", length=500, nullable=false)
      */
     protected $address;
 
      /**
-      * @Column(name="zip_code", type="string", length=5, nullable=false)
+      * @ORM\Column(name="zip_code", type="string", length=5, nullable=false)
       */
     protected $zipCode;
+    
+    /**
+     * @var datetime $created
+     *
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     */
+    protected $created;
+
+    /**
+     * @var datetime $updated
+     * 
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime")
+     */
+    protected $updated;
     
 	/**
 	 * @return the $shopId

@@ -51,9 +51,7 @@ $ems = $application->getBootstrap()
 // Load Symfony Doctrine Component
 $classLoader = new \Doctrine\Common\ClassLoader('Symfony', APPLICATION_PATH . '/../library/Doctrine');
 // Register Symfony Doctrine Component
-$classLoader->register();
-
-
+$classLoader->register();    
 
 // loop over the array of entity managers objects
 foreach ($ems as $em) {
