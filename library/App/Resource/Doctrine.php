@@ -223,8 +223,8 @@ class App_Resource_Doctrine extends Zend_Application_Resource_ResourceAbstract
 		
 		// translatable
 		$listener = new Gedmo\Translatable\TranslationListener;
-		$listener->setTranslatableLocale('en');
-		$listener->setDefaultLocale('en');
+		$listener->setTranslatableLocale('it_it');
+		$listener->setDefaultLocale('it_it');
 		$listener->setAnnotationReader($cachedAnnotationReader);
 		$evm->addEventSubscriber($listener);
 		

@@ -223,7 +223,7 @@ class EntityRepository implements ObjectRepository
         }
 
         $fieldName = lcfirst(\Doctrine\Common\Util\Inflector::classify($by));
-
+        
         if ($this->_class->hasField($fieldName) || $this->_class->hasAssociation($fieldName)) {
             return $this->$method(array($fieldName => $arguments[0]));
         }

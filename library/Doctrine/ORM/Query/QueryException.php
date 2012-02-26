@@ -54,7 +54,7 @@ class QueryException extends \Doctrine\ORM\ORMException
 
     public static function invalidParameterType($expected, $received)
     {
-        return new self('Invalid parameter type, ' . $received . ' given, but ' . $expected . ' expected.');
+    	return new self('Invalid parameter type, ' . $received . ' given, but ' . $expected . ' expected.');
     }
 
     public static function invalidParameterPosition($pos)

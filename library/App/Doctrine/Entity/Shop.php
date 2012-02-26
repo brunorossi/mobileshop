@@ -3,6 +3,7 @@ namespace App\Doctrine\Entity;
 
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass="App\Doctrine\Repository\Shop")
@@ -37,18 +38,41 @@ class Shop
      * @var datetime $created
      *
      * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(name="created", type="datetime")
      */
     protected $created;
-
+    
     /**
      * @var datetime $updated
      * 
      * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(name="updated", type="datetime")
      */
     protected $updated;
     
+    /**
+     * @Gedmo\Slug(fields={"name"})
+     * @ORM\Column(name="slug", type="string", length=500, nullable=false, unique=true)
+     */
+    protected $slug;
+    
+	/**
+	 * @ORM\ManyToMany(targetEntity="Tag", cascade={"persist"})
+	 * @ORM\JoinTable(
+	 *     name="shops_tags",
+	 * 	   joinColumns={@ORM\JoinColumn(name="shop_id", referencedColumnName="shop_id")},
+	 *	   inverseJoinColumns={@ORM\JoinColumn(name="tag_id", referencedColumnName="tag_id")}
+	 * )
+	 */
+    protected $tags;
+    
+    /**
+     * 
+     */
+	public function __construct() {
+		$this->tags = new ArrayCollection;
+	}
+	    
 	/**
 	 * @return the $shopId
 	 */
@@ -76,26 +100,53 @@ class Shop
 	public function getZipCode() {
 		return $this->zipCode;
 	}
-	
+
 	/**
-	 * @param field_type $name
+	 * @return the $created
+	 */
+	public function getCreated() {
+		return $this->created;
+	}
+
+	/**
+	 * @return the $updated
+	 */
+	public function getUpdated() {
+		return $this->updated;
+	}
+
+	/**
+	 * @return the $seoId
+	 */
+	public function getSlug() {
+		return $this->slug;
+	}
+
+	/**
+	 * @param fieldtype $name
 	 */
 	public function setName($name) {
 		$this->name = $name;
 	}
 
 	/**
-	 * @param field_type $address
+	 * @param fieldtype $address
 	 */
 	public function setAddress($address) {
 		$this->address = $address;
 	}
 
 	/**
-	 * @param field_type $zipCode
+	 * @param fieldtype $zipCode
 	 */
 	public function setZipCode($zipCode) {
 		$this->zipCode = $zipCode;
 	}
-
+	
+	/**
+	 * 
+	 */
+	public function addTag(Tag $tag) {
+		$this->tags[] = $tag;
+	}
 }
