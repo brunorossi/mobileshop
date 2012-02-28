@@ -2,13 +2,14 @@
 namespace App\Doctrine\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 
 // if i use namespace:
 // class Shop extends EntityRepository 
 
 class Shop extends EntityRepository
 {
-    
+		
 	public function getAllShop()
     {
 		return $this->getEntityManager()

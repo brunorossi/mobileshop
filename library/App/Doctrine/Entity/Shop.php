@@ -69,8 +69,21 @@ class Shop
     /**
      * 
      */
-	public function __construct() {
+	public function __construct(array $options = null) {
 		$this->tags = new ArrayCollection;
+		if (null !== $options) {
+			$this->init($options);
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	public function init(array $options) {
+		foreach ($options as $name => $value) {
+			$method = 'set' . ucfirst($name);
+			$this->$method($value);
+		}
 	}
 	    
 	/**
@@ -121,6 +134,13 @@ class Shop
 	public function getSlug() {
 		return $this->slug;
 	}
+	
+	/**
+	 * @return the $tags
+	 */
+	public function getTags() {
+		return $this->tags;
+	}	
 
 	/**
 	 * @param fieldtype $name
@@ -144,9 +164,9 @@ class Shop
 	}
 	
 	/**
-	 * 
+	 * @param fieldtype $tags
 	 */
-	public function addTag(Tag $tag) {
-		$this->tags[] = $tag;
+	public function setTags(ArrayCollection $tags) {
+		$this->tags = $tags;
 	}
 }
