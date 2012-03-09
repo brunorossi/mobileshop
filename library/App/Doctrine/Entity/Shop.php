@@ -141,7 +141,7 @@ class Shop
 	public function getTags() {
 		return $this->tags;
 	}	
-
+	
 	/**
 	 * @param fieldtype $name
 	 */
@@ -169,4 +169,5 @@ class Shop
 	public function setTags(ArrayCollection $tags) {
 		$this->tags = $tags;
 	}
+	
 }

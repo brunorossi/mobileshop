@@ -7,6 +7,7 @@ class IndexController extends Zend_Controller_Action
     
     public function indexAction ()
     {
+    	/*
     	$entityManager = $this->getInvokeArg('bootstrap')->entityManagers['shop'];
         
     	$service = new App_Service_Model_Shop($entityManager);
@@ -22,13 +23,13 @@ class IndexController extends Zend_Controller_Action
         
         $service->update(41, $params);
         
-        $service->remove(array(30, 31, 32, 33, 34));
+        $service->remove(array(30, 31, 32, 33, 34));*/
 
     }
     
     public function testAction()
     {
-		try {
+		/*try {
 			
 			
 	
@@ -94,7 +95,7 @@ class IndexController extends Zend_Controller_Action
 			
 		    echo $e->getMessage();
 		
-		}
+		}*/
     }
 }
 
