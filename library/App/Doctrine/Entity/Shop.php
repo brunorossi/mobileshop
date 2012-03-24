@@ -169,5 +169,4 @@ class Shop
 	public function setTags(ArrayCollection $tags) {
 		$this->tags = $tags;
 	}
-	
 }

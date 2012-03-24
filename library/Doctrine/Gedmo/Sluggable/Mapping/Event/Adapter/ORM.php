@@ -26,9 +26,6 @@ final class ORM extends BaseAdapterORM implements SluggableAdapter
         $em = $this->getObjectManager();
         $qb = $em->createQueryBuilder();
         
-		echo $config['slug'];
-
-        
         $qb->select('rec.' . $config['slug'])
             ->from($config['useObjectClass'], 'rec')
             ->where($qb->expr()->like(
@@ -47,13 +44,8 @@ final class ORM extends BaseAdapterORM implements SluggableAdapter
             }
         }
         
-        
         $q = $qb->getQuery();
 		
-        echo $qb->__toString();
-        
-        print_r($parameters);
-        
         if ($parameters) {
             $q->setParameters($parameters);
         }
