@@ -5,12 +5,19 @@ class Shop_IndexController extends Zend_Rest_Controller
 	
 	protected $_shopPersistanceService;
 	
+	protected $_responseBody;
+	
+	protected $_responseCode;
+	
+	protected $_responseHeaders = array();
+	
+	protected $_inputParams = array();
+	
     public function init()
     {
     	$config = array();
     	
-    	$config['shopEntityManager'] = $this->getInvokeArg('bootstrap')
-    	                                    ->entityManagers['shop'];
+    	$config['shopEntityManager'] = $this->getInvokeArg('bootstrap')->entityManagers['shop'];
     	                                    
 		$config['tagPersistanceService'] = new Tag_Service_Persistance($config);
     	
@@ -19,19 +26,25 @@ class Shop_IndexController extends Zend_Rest_Controller
     	$this->_shopPersistanceService = new Shop_Service_Persistance($config);
     }
     
+    
+    public function preDispatch() 
+    {
+    	$request = $this->getRequest();
+		if (true === $request->isGet()) {
+    		$this->_inputParams = $request->getQuery();
+    	} else if (true === $request->isPost() || true === $request->isPut()) {
+    		$this->_inputParams = Zend_Json::decode($request->getRawBody());
+    	}     	
+    }
+    
     /**
      * 
      * Retrieves a collection of entities from persistance layer
      */
     public function indexAction()
     {        	
-    	$result = $this->_shopPersistanceService->fetch($this->getRequest()->getQuery());
-
-    	$json = $this->_helper
-    	             ->doctrine2Json
-    	             ->encode($result, $this->_shopPersistanceService->getShopEntityManager());
-    	
-        $this->getResponse()->setHttpResponseCode(400)->appendBody($json);          	
+    	$this->_responseBody = $this->_shopPersistanceService->fetch($this->_inputParams);
+		$this->_responseCode = 200;
     }
 
     /**
@@ -40,86 +53,67 @@ class Shop_IndexController extends Zend_Rest_Controller
      */
     public function getAction()
     {
-		$result = $this->_shopPersistanceService->fetchById($this->getRequest()->getQuery());
-    	
-		$json = $this->_helper
-    	             ->doctrine2Json
-    	             ->encode($result, $this->_shopPersistanceService->getShopEntityManager());
-    	
-        $this->getResponse()->setHttpResponseCode(400)->appendBody($json);  
+		if (false === ($this->_responseBody = $this->_shopPersistanceService->fetchById($this->_inputParams))) {
+			$this->_responseCode = 404;
+		} else {
+			$this->_responseCode = 200;			
+		}
     } 
 
     /**
-     * 
      * Insert an entity into the persistance layer
+     * array('name' => 'pino', 'address' => '123', 'zipCode' => '15021', 'tags' => array(1, 2, 3))
      */
     public function postAction()
     {	
-		$result = $this->_shopPersistanceService
-		               ->insert(array('name' => 'pino', 'address' => '123', 'zipCode' => '15021', 'tags' => array(1, 2, 3)));
-		               
+		$result = $this->_shopPersistanceService->insert($this->_inputParams);
 		if (false === $result) {
-			
-		} 
-		
-		$json = $this->_helper
-    	             ->doctrine2Json
-    	             ->encode($result, $this->_shopPersistanceService->getShopEntityManager());		
-		
-        $this->getResponse()->setHttpResponseCode(200)->appendBody($json);  		
-        
-		 // Set the HTTP response code to 201, indicating "Created"
-    	 // Set the Location header to point to the canonical URI for the newly created item: "/team/31"
-    	 // Provide a representation of the newly created item
-		// need an action helper with code and messages	
+			$this->_responseCode = 401;
+			$this->_responseBody = $this->_shopPersistanceService->getShopForm()->getMessages();	
+		} else {
+			$this->_responseCode = 201;
+			$this->_responseBody = $result;
+		}	
     }
     
     /**
-     * 
      * Update an entity into the persistance layer
      */
     public function putAction()
     {
-    		
-		$result = $this->_shopPersistanceService
-		               ->update(array('id' => 100, 'name' => 'aaaa2222', 'address' => '123', 'zipCode' => '10021', 'tags' => array(1, 2, 3)));
-
-		if (false === $result) {
-			
-		} 		               
-		               
-		$json = $this->_helper
-    	             ->doctrine2Json
-    	             ->encode($result, $this->_shopPersistanceService->getShopEntityManager());		
-		    	             
-        $this->getResponse()->setHttpResponseCode(200)->appendBody($json); 
-		// Similarly, with PUT requests, you simply indicate an HTTP 200 status when successful, and show a representation of the updated item. DELETE requests should return an HTTP 204 status (indicating success - no content), with no body content. 
+		$result = $this->_shopPersistanceService->update($this->_inputParams);
+    	if (false === $result) {
+			$this->_responseCode = 401;
+    		$this->_responseBody = $this->_shopPersistanceService->getShopForm()->getMessages();	
+		} else {
+			$this->_responseCode = 201;
+			$this->_responseBody = $result;
+		}            
     }
     
     /**
-     * 
      * Delete an entity into the persistance layer
      */
     public function deleteAction()
     {
-		$result = $this->_shopPersistanceService
-		               ->remove(array(12));
-		print_r($result);
-		die();
+		$result = $this->_shopPersistanceService->remove($this->_inputParams);
     }
     
     
     public function postDispatch() 
     {
-    	/*
-    	place it into a controller helper!
-    	$json = $this->_helper
-        		     ->json
-        		     ->encodeJson('');
-        $this->getResponse()
-             ->setHttpResponseCode(400)
-             ->appendBody($json);
-        */  	
+		if (true === ($this->_responseBody instanceof App\Doctrine\Entity\Shop)) {
+	    	$json = $this->_helper->doctrine2Json->encode(
+				$this->_responseBody, 
+				$this->_shopPersistanceService->getShopEntityManager()
+			);
+		} else {
+			$json = $this->_helper->json->encodeJson($this->_responseBody);
+		}
+		if (true !== empty($this->_inputParams['callback'])) {
+			$json = $this->_inputParams['callback'] . '(' . $json . ');';
+		}
+        $this->getResponse()->setHttpResponseCode($this->_responseCode)->appendBody($json);
     }
 }
 
