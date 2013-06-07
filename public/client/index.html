@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"/>
+    	<meta name="apple-mobile-web-app-capable" content="yes" />
+    	<title>Dojo Mobile App</title>
+    	<style type="text/css">
+			input:required:invalid, input:focus:invalid { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAeVJREFUeNqkU01oE1EQ/mazSTdRmqSxLVSJVKU9RYoHD8WfHr16kh5EFA8eSy6hXrwUPBSKZ6E9V1CU4tGf0DZWDEQrGkhprRDbCvlpavan3ezu+LLSUnADLZnHwHvzmJlvvpkhZkY7IqFNaTuAfPhhP/8Uo87SGSaDsP27hgYM/lUpy6lHdqsAtM+BPfvqKp3ufYKwcgmWCug6oKmrrG3PoaqngWjdd/922hOBs5C/jJA6x7AiUt8VYVUAVQXXShfIqCYRMZO8/N1N+B8H1sOUwivpSUSVCJ2MAjtVwBAIdv+AQkHQqbOgc+fBvorjyQENDcch16/BtkQdAlC4E6jrYHGgGU18Io3gmhzJuwub6/fQJYNi/YBpCifhbDaAPXFvCBVxXbvfbNGFeN8DkjogWAd8DljV3KRutcEAeHMN/HXZ4p9bhncJHCyhNx52R0Kv/XNuQvYBnM+CP7xddXL5KaJw0TMAF8qjnMvegeK/SLHubhpKDKIrJDlvXoMX3y9xcSMZyBQ+tpyk5hzsa2Ns7LGdfWdbL6fZvHn92d7dgROH/730YBLtiZmEdGPkFnhX4kxmjVe2xgPfCtrRd6GHRtEh9zsL8xVe+pwSzj+OtwvletZZ/wLeKD71L+ZeHHWZ/gowABkp7AwwnEjFAAAAAElFTkSuQmCC'); background-position: right top; background-repeat: no-repeat; -moz-box-shadow: none; } 
+			input:required:valid { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAepJREFUeNrEk79PFEEUx9/uDDd7v/AAQQnEQokmJCRGwc7/QeM/YGVxsZJQYI/EhCChICYmUJigNBSGzobQaI5SaYRw6imne0d2D/bYmZ3dGd+YQKEHYiyc5GUyb3Y+77vfeWNpreFfhvXfAWAAJtbKi7dff1rWK9vPHx3mThP2Iaipk5EzTg8Qmru38H7izmkFHAF4WH1R52654PR0Oamzj2dKxYt/Bbg1OPZuY3d9aU82VGem/5LtnJscLxWzfzRxaWNqWJP0XUadIbSzu5DuvUJpzq7sfYBKsP1GJeLB+PWpt8cCXm4+2+zLXx4guKiLXWA2Nc5ChOuacMEPv20FkT+dIawyenVi5VcAbcigWzXLeNiDRCdwId0LFm5IUMBIBgrp8wOEsFlfeCGm23/zoBZWn9a4C314A1nCoM1OAVccuGyCkPs/P+pIdVIOkG9pIh6YlyqCrwhRKD3GygK9PUBImIQQxRi4b2O+JcCLg8+e8NZiLVEygwCrWpYF0jQJziYU/ho2TUuCPTn8hHcQNuZy1/94sAMOzQHDeqaij7Cd8Dt8CatGhX3iWxgtFW/m29pnUjR7TSQcRCIAVW1FSr6KAVYdi+5Pj8yunviYHq7f72po3Y9dbi7CxzDO1+duzCXH9cEPAQYAhJELY/AqBtwAAAAASUVORK5CYII='); background-position: right top; background-repeat: no-repeat; }		
+		</style>
+    	<link href="http://ajax.googleapis.com/ajax/libs/dojo/1.7.2/dojox/mobile/themes/iphone/iphone.css" rel="stylesheet" />
+ 		<script src="http://ajax.googleapis.com/ajax/libs/dojo/1.7.2/dojo/dojo.js" data-dojo-config="async: true"></script>
+ 		<script type="text/javascript">
+	 		
+ 			require(["dojo/ready"], function(ready){
+	 		    
+ 				ready(
+ 					
+ 					function () {
+	 		        
+ 					// loading of the required dijits via AMD
+ 					// The Asynchronous Module Definition (AMD) API specifies 
+ 					// a mechanism for defining modules such that the 
+ 					// module and its dependencies can be asynchronously loaded
+ 					require(
+						[
+							"dojo/io/script", 
+							"dojox/mobile/parser", 
+							"dojox/mobile/deviceTheme", 
+							"dojox/mobile/compat", 
+							"dojox/mobile/ScrollableView", 
+							"dojox/mobile/ContentPane", 
+							"dojox/mobile/Heading", 
+							"dojox/mobile/RoundRectList", 
+							"dojox/mobile/ListItem", 
+							"dojox/mobile/RoundRect", 
+							"dojo/io-query", 
+							"dojo/dom-form", 
+							"dojox/mobile/TextBox", 
+							"dojox/mobile/Button", 
+							"dojo/_base/window", 
+							"dojox/mobile/ComboBox", 
+							"dojo/store/Memory",
+							"dojox/mobile/ToolBarButton", 
+ 						], 
+	 		        	
+ 						function(
+							script, 
+							parser, 
+							deviceTheme, 
+							compact, 
+							scrollableView, 
+							contentPane, 
+							mobHeading, 
+							mobRoundRectList, 
+							mobListItem, 
+							mobRoundRect, 
+							ioQuery, 
+							domForm, 
+							textBox, 
+							button, 
+							win, 
+							comboBox, 
+							memoryStore,
+							toolBarButton
+ 						) {
+	 		            
+ 							ready(	
+ 								
+ 								function ()	{
+	 						
+ 									// remote store base url
+ 									var baseUri = "http://mobileshop.zs.vbox";
+ 									
+ 									// MAIN VIEW
+ 									
+									// main View Scrollable Dijit to show list of all shops
+			 		            	var mainView = new scrollableView(
+			 		            		{
+			 						     	id: "mainView"
+			 							}, 
+			 							dojo.create("div", null, dojo.body())
+			 						);
+									// fixed to top mobile heading
+			 						var mainViewHeading = new mobHeading(
+			 							{
+			 								label: "Shop List",
+			 								fixed: "top"
+			 					   		}
+			 						);
+									// main view list dijit
+			 						var mainViewList = new mobRoundRectList();
+									// toolbar button to add a item, onClick it performs a
+									// slide transition to edit View
+									var addButton = new toolBarButton(
+										{
+											icon: "mblDomButtonWhitePlus",
+											style: "float: right;",
+											onClick: function () {
+												mainView.performTransition('edit', 1, "slide", null);
+											}
+										}		
+									);
+									// adds the add button to the heading 
+									mainViewHeading.addChild(addButton);
+			 						// adds heading to the main view
+									mainView.addChild(mainViewHeading); 
+									// adds mainViewList to the main view
+			 						mainView.addChild(mainViewList);
+									// startup lifecycle of the main view dijit
+			 						mainView.startup(); 									
+ 									
+ 									
+									// DETAIL VIEW
+									
+									// detail ScrollableView Dijit to show a single shop detail
+			 						var detailView = new scrollableView(
+			 							{
+			 						    	id: "detail"
+			 							}, 
+			 							dojo.create("div", null, dojo.body())
+			 						);
+									// contantPane Dijit
+			 						var detailViewContentPane = new contentPane(
+			 							{
+											id: "detailContainer"	
+			 							}
+			 						);
+									// fixed to top mobile heading
+			 						var detailViewHeading = new mobHeading(
+			 							{
+			 								// label: "Detail",
+			 					       		back: "Home",
+			 					       		moveTo: "mainView",
+			 					       		fixed: "top"
+			 					   		}
+			 						);
+			 						// adds heading to the detail view
+			 						detailView.addChild(detailViewHeading); 
+			 						// adds contentPane to the main view
+			 						detailView.addChild(detailViewContentPane); 	
+									// startup lifecycle of the detail view dijit
+									detailView.startup();
+ 									
+									
+									// ADD/EDIT FORM VIEW
+ 									
+		 		            		// scrollableView dijit to edit content
+		 							var editView = new scrollableView(
+		 								{
+		 						    		id: "edit",
+		 						     		selected: false
+		 								}, 
+		 								dojo.create("div", null, dojo.body())
+		 							);
+	 							
+									// fixed to the top mobile heading dijit with a back button to mainView 
+		 							var editViewHeading = new mobHeading(
+		 								{
+		 									label: "Edit",
+		 					       			back: "Home",
+		 					       			moveTo: "mainView",
+		 					       			fixed: "top"
+		 					   			}
+		 							);
+	 								
+									// adds heading dijit to editView
+	 								editView.addChild(editViewHeading);
+	 								
+									// form dijit 
+	 								var form = new dojo.create('form', { action: '', id: 'shop-edit' });	 						
+									
+									// the following lines add a Name TextBox dijit 
+									// togheter with label html element to form dijit
+		
+									// adds a html label element with a child text node to form 
+	 								var label = new dojo.create('label');
+	 								label.appendChild(win.doc.createTextNode('Name'));
+	 								form.appendChild(label);
+	 								// adds a new text box dijit to form 
+	 								var element = new textBox({ label: 'Name', name: "name", required: "required" });
+									form.appendChild(element.domNode);
+									// adds a br html element to form
+									form.appendChild(new dojo.create('br', {}));
+							
+									// the following lines add an Address TextBox dijit 
+									// togheter with label html element to form dijit
+			 						label = new dojo.create('label');
+			 						label.appendChild(win.doc.createTextNode('Address'));
+			 						form.appendChild(label);
+			 						element = new textBox({ name: "address", required: "required" });	
+									form.appendChild(element.domNode);
+			 						form.appendChild(new dojo.create('br', {}));	 						
+
+									// the following lines add a Zip Code TextBox dijit 
+									// togheter with label html element to form dijit
+			 						label = new dojo.create('label');
+			 						label.appendChild(win.doc.createTextNode('Zip Code'));
+			 						form.appendChild(label);
+			 						element = new textBox({ name: "zipCode", required: "required", pattern: "[0-9]{5}" });	 	
+									form.appendChild(element.domNode);							
+			 						form.appendChild(new dojo.create('br', {}));
+
+									// the following lines add a Tags Combo Box dijit 
+									// togheter with label html element to form dijit
+			 						label = new dojo.create('label');
+			 						label.appendChild(win.doc.createTextNode('Tags'));	 							 						
+			 						form.appendChild(label);		
+			 						
+			 						// Combo Box dijit uses a local memoryStore
+			 						// @todo - jsonp request to load Combo Box via remote store
+			 						element = new comboBox(
+			 							{ 
+			 								name: "tags[]", 
+			 								required: "required", 
+			 								store:	new memoryStore(
+			 									{ 
+													idProperty: "name", 
+													data: [{ name: "Red" }, { name: "Blue" }]
+												}
+			 								)
+			 							}
+			 						);
+			 						form.appendChild(element.domNode);							
+			 						form.appendChild(new dojo.create('br', {}));
+									
+									// on form submit sends a jsonp request to the given url
+									// to add an item to the store
+									var editViewSubmit = function () { 
+ 			 							script.get(
+			 								{
+			 									url: baseUri + "/shop/index/post/jsonp",
+			 				        			callbackParamName: "callback",
+			 				        			preventCache: true,
+												form: 'shop-edit',
+ 				 								load: function (data) {
+ 				 									// @todo
+ 				 									console.log(data);
+ 				 								},
+												error: function (errors) {
+													// @todo
+													console.log(errors);
+												}
+			 								}
+ 				 						);
+ 									} 	
+ 									
+									// submit button dijit
+			 						var submit = new button(
+		 								{ 
+		 									name: "button", 
+		 									label: "send", 
+		 									type: "button",
+		 									onClick: editViewSubmit
+		 								}
+		 							);
+ 								
+									// reset button dijit
+		 							var reset = new button(
+		 								{ 
+		 									name: "button", 
+		 									label: "reset", 
+		 									type: "reset"
+		 								}
+		 							);
+									
+									// adds button dijits to form 
+			 						form.appendChild(submit.domNode);
+			 						form.appendChild(reset.domNode);
+	 								
+			 						// adds fom dijit to editView dijit
+			 						editView.containerNode.appendChild(form);	 
+			 					 	
+			 						// lifecycle dijit startup
+			 						editView.startup(); 	
+	 		            			 						
+			 						// onClick on a list item it sends a jsonp callback 
+			 						// to retrieve a single item data
+ 									var listItemClick = function () { 
+										script.get(
+											{
+												url: baseUri + "/shop/index/get/jsonp",
+								        		callbackParamName: "callback",
+								        		preventCache: true,
+												content: { id: this.id.replace("list-item-", "")  },
+												load: function (shop) {
+													detailViewContentPane.set(
+														'content', 
+														'<div id="round-rect">' 
+													  + '<div><span>Nome:</span> <span>' + shop.name + '</span></div>'
+													  + '<div><span>Address:</span> <span>' + shop.address + '</span></div>'
+													  + '<div><span>ZipCode:</span> <span>' + shop.zip_code + '</span></div>'
+													  + '</div>'
+													);
+													new mobRoundRect(
+														{ shadow: true }, 
+														'round-rect'
+													);
+												},
+												error: function (error) {
+													// @todo
+													console.log(error)
+												}
+											}
+										);		 								        	
+										detailViewHeading.set('label', this.label);
+										mainView.performTransition('detail', 1, "slide", null);
+									}	
+			 						
+			 						// loads the list with the items returned by the following
+			 						// JSONP Request
+			 						var loadListItem = function (data) {
+	 									for (i = 0; i < data.length; i++) {
+	 										var shop = data[i];
+	 										var shopListItem = new mobListItem(
+	 											{
+	 									    		label: '<span style="color: red">' 
+	 									    		     + shop.name + '</span> '
+	 									    			 + '<span>' + shop.address + ', ' 
+	 									    			 + shop.zip_code + '</span>',
+	 									        	anchorLabel: true,
+	 									        	spanLabel: true,
+	 									        	id: "list-item-" + shop.shop_id,
+	 									        	moveTo: "#",
+	 									        	onClick: listItemClick
+	 											}
+	 										);
+	 										mainViewList.addChild(shopListItem);									
+	 									}
+	 								}
+			 						 
+			 						// JSONP request to load items of the mainViewList dijit			 						
+			 						script.get(
+			 							{
+			 								url: baseUri + "/shop/index/index/jsonp",
+			 				        		callbackParamName: "callback",
+			 				        		preventCache: true,
+			 								content: {},
+			 								load: loadListItem,
+			 								error: function (errors) {
+			 									// @todo
+			 									console.log(errors)
+			 								}
+			 							}
+			 						);	
+	 					
+ 						});
+					});
+	 		    });
+	 		});
+ 		</script>
+    </head>
+    <body></body>
+</html>
