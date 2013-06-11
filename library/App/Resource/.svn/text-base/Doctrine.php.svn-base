@@ -1,0 +1,108 @@
+<?php
+/**
+ *
+ */
+class App_Resource_Doctrine extends Zend_Application_Resource_ResourceAbstract
+{
+
+    /**
+     *
+     */
+    public $_explicitType = 'App_Resource_Doctrine';
+
+    /**
+     *
+     */
+    public function init() {
+
+        $options = $this->getOptions();
+
+        // include Doctrine's class loader
+        require $options['libraryPath'] . '/Doctrine/Common/ClassLoader.php';
+        $classLoader = new \Doctrine\Common\ClassLoader('Doctrine', $options['libraryPath']);
+
+        // register Doctrine's class loader on SPL autoload stack
+        $classLoader->register();
+
+        // get the Doctrine configuration object
+        $config = new \Doctrine\ORM\Configuration;
+
+        // cache settings
+        $cache = new $options['cacheObject'];
+        // caching for metadata information
+        // see: http://docs.doctrine-project.org/projects/doctrine-orm/en/2.0.x/reference/configuration.html#metadata-cache-recommended
+        $config->setMetadataCacheImpl($cache);
+        // caching for DQL queries
+        // see: http://docs.doctrine-project.org/projects/doctrine-orm/en/2.0.x/reference/configuration.html#query-cache-recommended
+        $config->setQueryCacheImpl($cache);
+
+        // sets mapping drivers
+        // see: http://docs.doctrine-project.org/projects/doctrine-orm/en/2.0.x/reference/configuration.html#metadata-driver-required
+        $driver = new $options['mappingDriver']($options['pathsToMappingFiles']);
+        $config->setMetadataDriverImpl($driver);
+
+        // sets the directory where Doctrine generates any proxy classes
+        // see: http://docs.doctrine-project.org/projects/doctrine-orm/en/2.0.x/reference/configuration.html#proxy-directory-required
+        $config->setProxyDir($options['proxyDirectory']);
+
+        // sets the namespace to use for generated proxy classes
+        // see: http://docs.doctrine-project.org/projects/doctrine-orm/en/2.0.x/reference/configuration.html#proxy-namespace-required
+        $config->setProxyNamespace($options['proxyNamespace']);
+
+        // sets autogeneration of proxy classes
+        // see: http://docs.doctrine-project.org/projects/doctrine-orm/en/2.0.x/reference/configuration.html#auto-generating-proxy-classes-optional
+        $config->setAutoGenerateProxyClasses((bool)$options['autoGenerateProxyClasses']);
+
+        // optional logger instance
+        // see: http://docs.doctrine-project.org/projects/doctrine-orm/en/2.0.x/reference/configuration.html#sql-logger-optional
+        if (false === empty($options['loggerObject'])) {
+            $logger = new $options['loggerObject'];
+            $config->setSQLLogger($logger);
+        }
+
+        // array to store entityManager
+        // there is a entityManager for each Db
+        // Db with Master/Slave Replication share the same entityManager
+        // through Doctrine\DBAL\Connections\MasterSlaveConnection
+        $entityManagers = array();
+
+        foreach ($options['conn'] as $dbKey => $dbProperties) {
+
+            if (1 === count($dbProperties)) {
+
+                // no Replication, prepares the params for a simple connection
+                $params = current($dbProperties);
+
+
+            } else {
+
+                // Replication is set, prepares the params for a Master/Slave connection
+                $params = array(
+                    'wrapperClass' => 'Doctrine\DBAL\Connections\MasterSlaveConnection',
+                    'master' => $dbProperties['master'],
+                    'driver' => $dbProperties['master']['driver'],
+                );
+                while (FALSE !== ($slave = next($dbProperties))) {
+                    $params['slaves'][] = $slave;
+                }
+            
+                
+            }
+
+            // sets the connection object via DriverManager
+            $connection = \Doctrine\DBAL\DriverManager::getConnection($params, $config);
+
+            // sets the entityManager associative array
+            // with dbConnectionName as key and EntityManager object as values
+            $entityManagers[$dbKey] = \Doctrine\ORM\EntityManager::create($connection, $config);
+            
+        }
+
+        // puts the array of entityManagers objects into the Zend_Registry
+        Zend_Registry::set('entityManagers', $entityManagers);
+        
+        // returns the array of entityManagers objects
+        return Zend_Registry::get('entityManagers');
+    }
+
+}

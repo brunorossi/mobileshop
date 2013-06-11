@@ -1,8 +1,9 @@
 <?php
 
+
+
 class Shop_IndexController extends Zend_Rest_Controller
-{
-	
+{	
 	protected $_shopPersistanceService;
 	
 	protected $_responseBody;
@@ -15,26 +16,35 @@ class Shop_IndexController extends Zend_Rest_Controller
 	
     public function init()
     {
+		try {
     	$config = array();
     	
     	$config['shopEntityManager'] = $this->getInvokeArg('bootstrap')->entityManagers['shop'];
-    	                                    
+
 		$config['tagPersistanceService'] = new Tag_Service_Persistance($config);
-    	
+
+    	    	    	     	
 		$config['shopForm'] = new Shop_Form_Shop($config);
-    	
+	
     	$this->_shopPersistanceService = new Shop_Service_Persistance($config);
+		} catch (Exception $e) {
+			echo $e->getMessage();
+			die();
+		}
+
+    	
     }
     
     
     public function preDispatch() 
     {
+    	// do a zend controller helper to get all params
     	$request = $this->getRequest();
-		if (true === $request->isGet()) {
+    	if (true === $request->isGet()) {
     		$this->_inputParams = $request->getQuery();
     	} else if (true === $request->isPost() || true === $request->isPut()) {
     		$this->_inputParams = Zend_Json::decode($request->getRawBody());
-    	}     	
+    	}     	    	
     }
     
     /**
@@ -102,18 +112,26 @@ class Shop_IndexController extends Zend_Rest_Controller
     
     public function postDispatch() 
     {
-		if (true === ($this->_responseBody instanceof App\Doctrine\Entity\Shop)) {
-	    	$json = $this->_helper->doctrine2Json->encode(
-				$this->_responseBody, 
-				$this->_shopPersistanceService->getShopEntityManager()
-			);
-		} else {
-			$json = $this->_helper->json->encodeJson($this->_responseBody);
-		}
-		if (true !== empty($this->_inputParams['callback'])) {
+
+    	
+    	$entityManager = $this->getInvokeArg('bootstrap')
+    	                      ->entityManagers['shop'];
+    	
+    	$serializer = new Bgy\Doctrine\EntitySerializer($entityManager);
+    	
+    	$json = $this->_helper->doctrineToJson->encodeJson(
+    		$this->_responseBody,
+    		$serializer,
+    		array('App\Doctrine\Entity\Shop')
+		);
+        
+		if (isset($this->_inputParams['callback'])) {
 			$json = $this->_inputParams['callback'] . '(' . $json . ');';
 		}
-        $this->getResponse()->setHttpResponseCode($this->_responseCode)->appendBody($json);
+		
+		$this->getResponse()
+        	 ->setHttpResponseCode($this->_responseCode)
+        	 ->appendBody($json);
     }
 }
 

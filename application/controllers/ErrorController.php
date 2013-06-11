@@ -29,6 +29,9 @@ class ErrorController extends Zend_Controller_Action
                 break;
         }
         
+        
+        
+        
         // Log exception, if logger available
         if ($log = $this->getLog()) {
             $log->log($this->view->message, $priority, $errors->exception);

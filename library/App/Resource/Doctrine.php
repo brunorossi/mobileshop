@@ -114,20 +114,20 @@ class App_Resource_Doctrine extends Zend_Application_Resource_ResourceAbstract
         $options = $this->getOptions();
 
         // include Doctrine's class loader
-        require $options['libraryPath'] . '/Doctrine/Common/ClassLoader.php';
+        require_once $options['libraryPath'] . '/Doctrine/Common/ClassLoader.php';
         
         // Loads the Doctrine Class Loader Component
-        $classLoader = new \Doctrine\Common\ClassLoader('Doctrine', $options['libraryPath']);
+        $classLoader = new Doctrine\Common\ClassLoader('Doctrine', $options['libraryPath']);
         // register Doctrine's class loader on SPL autoload stack
         $classLoader->register();
                         
 		// Loads the Gedmo Extensions Component
-		$gedmo = new \Doctrine\Common\ClassLoader('Gedmo', APPLICATION_PATH . '/../library/Doctrine');
+		$gedmo = new Doctrine\Common\ClassLoader('Gedmo', APPLICATION_PATH . '/../library/Doctrine');
 		// Register Symfony Doctrine Component
 		$gedmo->register();      
 		
 		// autoloader for Entity namespace
-		$entity = new \Doctrine\Common\ClassLoader('Entity', APPLICATION_PATH . '/../library/App/Doctrine');
+		$entity = new Doctrine\Common\ClassLoader('Entity', APPLICATION_PATH . '/../library/App/Doctrine');
 		$entity->register();		
 		
 		// standard doctrine annotations
@@ -169,7 +169,7 @@ class App_Resource_Doctrine extends Zend_Application_Resource_ResourceAbstract
 		$driverChain->addDriver($annotationDriver, 'App\Doctrine\Entity');
 
         // get the Doctrine configuration object
-        $config = new \Doctrine\ORM\Configuration;
+        $config = new Doctrine\ORM\Configuration;
 
         // caching for metadata information
         // see: http://docs.doctrine-project.org/projects/doctrine-orm/en/2.0.x/reference/configuration.html#metadata-cache-recommended
@@ -262,7 +262,7 @@ class App_Resource_Doctrine extends Zend_Application_Resource_ResourceAbstract
             }
 
             // sets the connection object via DriverManager
-            $connection = \Doctrine\DBAL\DriverManager::getConnection($params, $config, $evm);
+            $connection = Doctrine\DBAL\DriverManager::getConnection($params, $config, $evm);
 
             // sets the entityManager associative array
             // with dbConnectionName as key and EntityManager object as values
